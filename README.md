@@ -71,22 +71,22 @@ The default hyperparameters give the best performances.
 
 ## Datasets
 
-There are three datasets used in our experiment:YAGO11K, WIKIDATA12K and WIKIDATA36K. facts of each datases are formed as "[start_time , end_time]". Each data folder has six files: 
+There are three datasets used in our experiment:ICEWS14, ICEWS05-15 and GDELT. facts of each datases are formed as "[subject entity, relation, object entity, time]". Each data folder has six files: 
 
--entity2id.txt: the first column is entity name, and second column is index of entity.
+**-entity2id.txt:** the first column is entity name, and second column is index of entity.
 
--relation2id.txt:the first column is relation name, and second column is index of relation.
+**-relation2id.txt:** the first column is relation name, and second column is index of relation.
 
--train.txt , test.txt , valid.txt: the first column is index of subject entity, second column is index of relation, third column is index of object entity, fourth column is the start time of fact and fifth column is end time of fact.
+**-train.txt, test.txt, valid.txt:** the first column is index of subject entity, second column is index of relation, third column is index of object entity, fourth column is the start time of fact and fifth column is end time of fact.
 
--stat.txt: num of entites and num of relations
+**-stat.txt:** num of entites and num of relations
 
 The detailed statistic of each dataset
 | Datasets   | Num of Entity | Num of Relation | Num of Time | Train | Valid | Test |
 |------------|---------------|-----------------|-------------|-------|-------|------|
-| ICEWS14    | 7,128         | 230             | 365         | 72,826| 8,941 | 8,963 |
-| ICEWS05-15 | 10,488        | 251             | 4,071       | 38,6962| 46,275| 46,092|
-| GDELT      | 500           | 20              | 366         | 2,735,685| 341,961| 341,961 |
+| ICEWS14 ([Alberto et al., 2018](https://www.aclweb.org/anthology/D18-1516.pdf))    | 7,128         | 230             | 365         | 72,826| 8,941 | 8,963 |
+| ICEWS05-15 ([Alberto et al., 2018](https://www.aclweb.org/anthology/D18-1516.pdf))  | 10,488        | 251             | 4,071       | 38,6962| 46,275| 46,092|
+| GDELT ([Goel et al., 2018](https://arxiv.org/pdf/1907.03143.pdf))     | 500           | 20              | 366         | 2,735,685| 341,961| 341,961 |
 
 ## Baselines
 
