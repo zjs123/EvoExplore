@@ -11,11 +11,11 @@ We firstly regard the local structure evolution as the establishment process of 
 If you make use of this code in your work, please cite the following paper:
 
 ```
-@inproceedings{Zhang2020TKGFrame,
-  title={A Two-Phase Framework for Temporal-Aware Knowledge Graph Completion},
-  author={Jiasheng Zhang, Yongpan Sheng and Jie Shao},
-  booktitle={the 4th Asia Pacific Web and Web-Age Information ManagementJoint Conference on Web and Big Data},
-  year={2020}
+@inproceedings{Zhang2021EvoExplore,
+  title={EvoExplore: temporal knowledge graph representationlearning via co-evolution modelling},
+  author={Jiasheng Zhang, Yongpan Sheng, Shuang Liang and Jie Shao},
+  booktitle={},
+  year={2021}
 }
 ```
 
@@ -46,7 +46,7 @@ pip install cudnn
 Then clone the repository::
 
 ```
-git clone https://github.com/zjs123/TKGComplt.git
+git clone https://github.com/zjs123/EvoExplore.git
 ```
 
 We use Python3 for data processing and our code is also written in Python3. 
