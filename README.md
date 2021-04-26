@@ -51,7 +51,7 @@ git clone https://github.com/zjs123/EvoExplore.git
 
 We use Python3 for data processing and our code is also written in Python3. 
 
-## Train_and_Test
+## Train and Test
 
 Before running, the user should process the datasets at first
 ```
