@@ -2,7 +2,7 @@
 
 Paper: "EvoExplore: temporal knowledge graph representation learning via co-evolution modelling"
 
-in this paper, we propose a novel framework to learn representations for temporal knowledge graph via modelling its local and global structure co-evolution, and this repository contains the  benchmark datasets used in the paper and the implementation of our proposed framework.
+In this paper, we propose a novel framework to learn representations for temporal knowledge graph via modelling its local and global structure co-evolution, and this repository contains the  benchmark datasets used in the paper and the implementation of our proposed framework.
 
 <p align="center"><img src="figs/example.PNG" width="300"/></p>
 
