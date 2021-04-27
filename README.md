@@ -53,21 +53,27 @@ We use Python3 for data processing and our code is also written in Python3.
 
 ## Train_and_Test
 
-Before running, the user should process the datasets at first
+To reproduce the reported results of our models, use the following commands:
 ```
-cd datasets/DATA_NAME
-python data_processing.py
+python Main.py
 ```
-Then, Train the model
+Some of the important Available options include:
 ```
-cd ..
-python Train.py 
-```
-Finally, ILP model was used to predict new facts
-```
-python ILP_solver.py
-```
-The default hyperparameters give the best performances.
+  '-data_type' default ='yago', choices = ['yago','wiki_data'], help ='dataset to choose'
+	'-version',  default = 'large', choices = ['large','small'], help = 'data version to choose'
+	'-test_freq', 	 default = 25,   	type=int, 	help='testing frequency'
+	'-neg_sample', 	 default = 5,   	type=int, 	help='negative samples for training'
+	'-gpu', 	 dest="gpu", 		default='1',			help='GPU to use'
+	'-name', 	 dest="name", 		help='Name of the run'
+	'-lr',	 dest="lr", 		default=0.0001,  type=float,	help='Learning rate'
+	'-margin', 	 dest="margin", 	default=1,   	type=float, 	help='margin'
+	'-batch', 	 dest="batch_size", 	default= 50000,   	type=int, 	help='Batch size'
+	'-epoch', 	 dest="max_epochs", 	default= 5000,   	type=int, 	help='Max epochs'
+	'-l2', 	 dest="l2", 		default=0.0, 	type=float, 	help='L2 regularization'
+	'-seed', 	 dest="seed", 		default=1234, 	type=int, 	help='Seed for randomization'
+	'-inp_dim',  dest="inp_dim", 	default = 128,   	type=int, 	help='')
+	'-L1_flag',  dest="L1_flag", 	action='store_false',   	 	help='Hidden state dimension of FC layer'
+   ```
 
 ## Datasets
 
