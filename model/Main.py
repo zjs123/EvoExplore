@@ -202,7 +202,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="model")
     parser.add_argument("--hidden",dest="hidden",type=int,default=100)
     parser.add_argument("--lr", dest="lr", type=float, default=0.001)
-    parser.add_argument("--ns", dest="ns", type=int, default=1)
+    parser.add_argument("--ns", dest="ns", type=int, default=10)
     parser.add_argument("--margin",dest="margin",type=int,default=1)
     parser.add_argument("--norm", dest="norm", type=int, default=2)
     parser.add_argument("--layer", dest="layer", type=int, default=1)
