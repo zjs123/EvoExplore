@@ -21,7 +21,7 @@ If you make use of this code in your work, please cite the following paper:
 
 ## Contents
 1. [Installation](#installation)
-2. [Train_and_Test](#Train and Test)
+2. [Train_and_Test](#Train_and_Test)
 3. [Datasets](#Datasets)
 4. [Baselines](#Baselines)
 5. [Contact](#contact)
@@ -51,7 +51,7 @@ git clone https://github.com/zjs123/EvoExplore.git
 
 We use Python3 for data processing and our code is also written in Python3. 
 
-## Train and Test
+## Train_and_Test
 
 Before running, the user should process the datasets at first
 ```
