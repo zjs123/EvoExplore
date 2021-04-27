@@ -21,7 +21,7 @@ If you make use of this code in your work, please cite the following paper:
 
 ## Contents
 1. [Installation](#installation)
-2. [Train and Test](#Train and Test)
+2. [Train_and_Test](#Train and Test)
 3. [Datasets](#Datasets)
 4. [Baselines](#Baselines)
 5. [Contact](#contact)
