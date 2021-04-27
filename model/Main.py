@@ -206,8 +206,8 @@ if __name__ == '__main__':
     parser.add_argument("--margin",dest="margin",type=int,default=1)
     parser.add_argument("--norm", dest="norm", type=int, default=2)
     parser.add_argument("--layer", dest="layer", type=int, default=1)
-    parser.add_argument("--dataset",dest="dataset",type=str,default="GDELT")
-    parser.add_argument("--numOfEpoch",dest="numOfEpoch",type=int,default=50)
+    parser.add_argument("--dataset",dest="dataset",type=str,default="ICEWS14")
+    parser.add_argument("--numOfEpoch",dest="numOfEpoch",type=int,default=300)
     
     args=parser.parse_args()
     Main(args)
