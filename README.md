@@ -53,26 +53,17 @@ We use Python3 for data processing and our code is also written in Python3.
 
 ## Train_and_Test
 
-To reproduce the reported results of our models, use the following commands:
+The user can use the following command to reproduce the reported results of our models, in which the train and the evaluation processes are performed automatically.
 ```
 python Main.py
 ```
-Some of the important Available options include:
+Some of the important available options include:
 ```
-  '-data_type' default ='yago', choices = ['yago','wiki_data'], help ='dataset to choose'
-	'-version',  default = 'large', choices = ['large','small'], help = 'data version to choose'
-	'-test_freq', 	 default = 25,   	type=int, 	help='testing frequency'
-	'-neg_sample', 	 default = 5,   	type=int, 	help='negative samples for training'
-	'-gpu', 	 dest="gpu", 		default='1',			help='GPU to use'
-	'-name', 	 dest="name", 		help='Name of the run'
-	'-lr',	 dest="lr", 		default=0.0001,  type=float,	help='Learning rate'
-	'-margin', 	 dest="margin", 	default=1,   	type=float, 	help='margin'
-	'-batch', 	 dest="batch_size", 	default= 50000,   	type=int, 	help='Batch size'
-	'-epoch', 	 dest="max_epochs", 	default= 5000,   	type=int, 	help='Max epochs'
-	'-l2', 	 dest="l2", 		default=0.0, 	type=float, 	help='L2 regularization'
-	'-seed', 	 dest="seed", 		default=1234, 	type=int, 	help='Seed for randomization'
-	'-inp_dim',  dest="inp_dim", 	default = 128,   	type=int, 	help='')
-	'-L1_flag',  dest="L1_flag", 	action='store_false',   	 	help='Hidden state dimension of FC layer'
+        '-hidden', default = 100, type = int, help ='dimension of the learned embedding'
+	'-lr',  default = 0.001, type = float, help = 'Learning rate'
+	'-ns', 	 default = 10,   	type=int, 	help='negative samples for training'
+	'-dataset', 	 default = "ICEWS14",   	choice=["ICEWS14","ICEWS05","GDELT"], 	help='dataset used to train'
+	'-numOfEpoch', 	default=300,	type=int	help='Train Epoches'
    ```
 
 ## Datasets
@@ -83,7 +74,7 @@ There are three datasets used in our experiment:ICEWS14, ICEWS05-15 and GDELT. f
 
 **-relation2id.txt:** the first column is relation name, and second column is index of relation.
 
-**-train.txt, test.txt, valid.txt:** the first column is index of subject entity, second column is index of relation, third column is index of object entity, fourth column is the start time of fact and fifth column is end time of fact.
+**-train.txt, test.txt, valid.txt:** the first column is index of subject entity, second column is index of relation, third column is index of object entity, fourth column is the happened time of fact.
 
 **-stat.txt:** num of entites and num of relations
 
