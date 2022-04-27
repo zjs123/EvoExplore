@@ -68,7 +68,7 @@ Some of the important available options include:
 
 ## Datasets
 
-There are three datasets used in our experiment:ICEWS14, ICEWS05-15 and GDELT. facts of each datases are formed as "[subject entity, relation, object entity, time]". Each data folder has four files: 
+There are four datasets used in our experiment:ICEWS14, ICEWS05-15, ICEWS18, and GDELT. facts of each datases are formed as "[subject entity, relation, object entity, time]". Each data folder has four files: 
 
 **-train.txt, test.txt, valid.txt:** the first column is index of subject entity, second column is index of relation, third column is index of object entity, fourth column is the happened time of fact.
 
