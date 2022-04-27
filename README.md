@@ -55,7 +55,7 @@ We use Python3 for data processing and our code is also written in Python3.
 
 The user can use the following command to reproduce the reported results of our models, in which the train and the evaluation processes are performed automatically.
 ```
-python Main.py
+python Main.py -dataset ICEWS14
 ```
 Some of the important available options include:
 ```
