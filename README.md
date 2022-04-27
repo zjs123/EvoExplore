@@ -68,11 +68,7 @@ Some of the important available options include:
 
 ## Datasets
 
-There are three datasets used in our experiment:ICEWS14, ICEWS05-15 and GDELT. facts of each datases are formed as "[subject entity, relation, object entity, time]". Each data folder has six files: 
-
-**-entity2id.txt:** the first column is entity name, and second column is index of entity.
-
-**-relation2id.txt:** the first column is relation name, and second column is index of relation.
+There are three datasets used in our experiment:ICEWS14, ICEWS05-15 and GDELT. facts of each datases are formed as "[subject entity, relation, object entity, time]". Each data folder has four files: 
 
 **-train.txt, test.txt, valid.txt:** the first column is index of subject entity, second column is index of relation, third column is index of object entity, fourth column is the happened time of fact.
 
@@ -83,7 +79,8 @@ The detailed statistic of each dataset
 |------------|---------------|-----------------|-------------|-------|-------|------|
 | ICEWS14 ([Alberto et al., 2018](https://www.aclweb.org/anthology/D18-1516.pdf))    | 7,128         | 230             | 365         | 72,826| 8,941 | 8,963 |
 | ICEWS05-15 ([Alberto et al., 2018](https://www.aclweb.org/anthology/D18-1516.pdf))  | 10,488        | 251             | 4,071       | 38,6962| 46,275| 46,092|
-| GDELT ([Goel et al., 2018](https://arxiv.org/pdf/1907.03143.pdf))     | 500           | 20              | 366         | 2,735,685| 341,961| 341,961 |
+| ICEWS18 ([Zhen Han et al., 2020](https://arxiv.org/abs/2012.15537v4))  | 23,033       | 256             | 304       | 373,018| 45,995| 49,545|
+|GDELT ([Goel et al., 2018](https://arxiv.org/pdf/1907.03143.pdf))     | 500           | 20              | 366         | 2,735,685| 341,961| 341,961 |
 
 ## Baselines
 
