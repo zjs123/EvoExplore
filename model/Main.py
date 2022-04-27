@@ -21,18 +21,8 @@ from multiprocessing import Manager, Pool
 class Main:
     
     def __init__(self, args):
-        self.lr = args.lr
-        self.ns = args.ns
-        self.norm = args.norm
-        self.layer = args.layer
-        self.margin = args.margin
-        self.hidden = args.hidden
         self.dataset = args.dataset
-        self.numOfEpoch = args.numOfEpoch
-        self.numOfBatches = 200
-        self.relation_sample = 3
-        self.entity_sample = 5
-        self.time_window_size = 5
+        self.init()
 
         self.result_path = "../dataset/"+self.dataset+"/"+"result.txt"
         
@@ -57,7 +47,7 @@ class Main:
             self.device = torch.device("cpu")
         #self.device = torch.device("cpu")
         
-        self.model = model(self.numOfEntity, self.numOfRelation, self.hidden, self.ns)
+        self.model = model(self.numOfEntity, self.numOfRelation, self.hidden, self.dataset, self.ns)
         self.model.to(self.device)
 
         self.Train_Dataset = Train_dataset(self.Train2id, self.Traindict, self.numOfTrain, self.numOfEntity, self.numOfRelation, self.ns)
@@ -65,15 +55,55 @@ class Main:
         
         self.Train()
         #self.test()
-        
+    
+    def init(self):
+        if self.dataset == "ICEWS14":
+            self.lr = 0.001
+            self.ns = 100
+            self.norm = 2
+            self.layer = 1
+            self.margin = 1
+            self.hidden = 100
+            self.numOfEpoch = 150
+            self.numOfBatches = 100
+            self.relation_sample = 3
+            self.entity_sample = 5
+            self.time_window_size = 5
+        if self.dataset == "ICEWS14_forecast":
+            self.lr = 0.001
+            self.ns = 10
+            self.norm = 2
+            self.layer = 1
+            self.margin = 1
+            self.hidden = 100
+            self.numOfEpoch = 70
+            self.numOfBatches = 100
+            self.relation_sample = 3
+            self.entity_sample = 5
+            self.time_window_size = 5
+        else:
+            self.lr = 0.001
+            self.ns = 10
+            self.norm = 2
+            self.layer = 1
+            self.margin = 1
+            self.hidden = 100
+            self.numOfEpoch = 150
+            self.numOfBatches = 500
+            self.relation_sample = 3
+            self.entity_sample = 5
+            self.time_window_size = 5
+
+    
     def Train(self):
         optimizer = optim.Adam(self.model.parameters(),lr=self.lr)
         dataLoader = DataLoader(self.Train_Dataset, int(self.numOfTrain/self.numOfBatches), shuffle = True, pin_memory = True, num_workers = 8)
+        #self.Test()
         for epoch in range(self.numOfEpoch+1):
             #self.adjust_learning_rate(optimizer, epoch)
             epochLoss = 0
             batch_num = 0
-            p = progressbar.ProgressBar(widgets = ["Epoch", str(epoch),":[", progressbar.Percentage(),"]", progressbar.Timer()], maxval = self.numOfBatches)
+            p = progressbar.ProgressBar(widgets = ["Epoch", ":[", progressbar.Percentage(),"]", progressbar.Timer()], maxval = self.numOfBatches)
             p.start()
             for batch in dataLoader:
                 p.update(batch_num)
@@ -85,8 +115,8 @@ class Main:
                 p_o = torch.LongTensor(batch[2]).to(self.device)
                 p_t = torch.LongTensor(batch[3]).float().to(self.device)
 
-                n_s_l = torch.LongTensor(batch[4]).to(self.device)
-                n_o_l = torch.LongTensor(batch[5]).to(self.device)
+                n_s = torch.LongTensor(batch[4]).to(self.device)
+                n_o = torch.LongTensor(batch[5]).to(self.device)
 
                 s_h_r = torch.LongTensor(batch[6]).to(self.device)
                 s_h_e = torch.LongTensor(batch[7]).to(self.device)
@@ -102,16 +132,12 @@ class Main:
 
                 p_s_o_r = torch.LongTensor(batch[15]).to(self.device)
 
-                n_s_g = torch.LongTensor(batch[16]).to(self.device)
-                n_o_g = torch.LongTensor(batch[17]).to(self.device)
-
                 #print(N_t_e[0][0])
-                batchLoss = self.model(p_s, p_r, p_o, p_t, n_s_l, n_o_l, \
+                batchLoss = self.model(p_s, p_r, p_o, p_t, n_s, n_o, \
 						                s_h_r, s_h_e, s_h_t, \
 						                o_h_r, o_h_e, o_h_t, \
 						                p_s_d, p_o_d, p_t_m, \
-                                        p_s_o_r, \
-                                        n_s_g, n_o_g \
+                                        p_s_o_r \
                                         )
                 batchLoss.backward()
                 optimizer.step()
@@ -119,27 +145,13 @@ class Main:
                 #print("Batch: " + str(batch_num) + " | Loss: " + str(batchLoss))
                 epochLoss += batchLoss
             p.finish()   
-            print("loss: " + str(float(epochLoss)))
+            print("loss: " + str(float(epochLoss))) 
             
-            if epoch % 50 == 0 and epoch!=0 :
+            if epoch % 5 == 0 and epoch!=0 :
 	            with torch.no_grad():
 	                self.model.eval()
 	                self.Test()
-	                #self.write(self.model) 
-	
-
-    def write(self, model):
-        #print "-----Writing Training Results to " + self.outAdd + "-----"
-        transmit_path = "../dataset/" + self.dataset + "/model_no_sum.pickle"
-        modelOutput = open(transmit_path, "wb")
-        pickle.dump(model, modelOutput)
-        modelOutput.close()
-
-    def preread(self):
-        modelInput = open("./dataset/"+self.dataset + "/model_score.pickle", "rb")
-        self.model = pickle.load(modelInput)
-        modelInput.close()
-
+	                
     def adjust_learning_rate(self, optimizer, epoch):
         lr = args.lr * (0.5 ** (epoch // 100))
         for param_group in optimizer.param_groups:
@@ -151,9 +163,9 @@ class Main:
         H3 = 0
         H5 = 0
         H10 = 0
-        dataLoader = DataLoader(self.Test_Dataset, 1, shuffle = False, pin_memory = True, num_workers = 6)
+        dataLoader = DataLoader(self.Test_Dataset, 5, shuffle = False, pin_memory = True, num_workers = 6)
         num = 0
-        p = progressbar.ProgressBar(widgets = ["Valid:", progressbar.Bar('*'), progressbar.Percentage(), "|", progressbar.Timer()], maxval = self.numOfTest//1 + 1)
+        p = progressbar.ProgressBar(widgets = ["Valid:", progressbar.Bar('*'), progressbar.Percentage(), "|", progressbar.Timer()], maxval = self.numOfTest//5 + 1)
         p.start()
         for test_sample in dataLoader:
             p.update(num)
@@ -200,14 +212,7 @@ class Main:
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="model")
-    parser.add_argument("--hidden",dest="hidden",type=int,default=100)
-    parser.add_argument("--lr", dest="lr", type=float, default=0.001)
-    parser.add_argument("--ns", dest="ns", type=int, default=10)
-    parser.add_argument("--margin",dest="margin",type=int,default=1)
-    parser.add_argument("--norm", dest="norm", type=int, default=2)
-    parser.add_argument("--layer", dest="layer", type=int, default=1)
-    parser.add_argument("--dataset",dest="dataset",type=str,default="ICEWS14")
-    parser.add_argument("--numOfEpoch",dest="numOfEpoch",type=int,default=300)
+    parser.add_argument("--dataset",dest="dataset",type=str,default="ICEWS14_forecast")
     
     args=parser.parse_args()
     Main(args)

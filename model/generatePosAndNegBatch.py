@@ -25,7 +25,7 @@ class Train_dataset(Dataset):
 
         self.sample = 3
         self.global_sample = 1
-        self.time_window_size = 1
+        self.time_window_size = 5
 
         self.all_entity = set([ i for i in range(self.numOfEntity)])
 
@@ -58,22 +58,13 @@ class Train_dataset(Dataset):
         tmpTail_d = len(self.train_dict["t2ee"][tmpTime][tmpTail])
         tmpTime_m = 2*len(self.train_dict["t2ee"][tmpTime].keys())#self.train2id["t"].count(tmpTime)
 
-        neg_s_set = self.all_entity #- set([tmpHead]) - set(self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime])
+        neg_s_set = self.all_entity# - set([tmpHead]) - set(self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime])
         #neg_s_set = (self.train_dict["ee2r"][tmpHead].keys()) | set(rd.sample(set(self.train_dict["t2ee"][tmpTime].keys()), 2*self.ns)) - set(self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime]) - set([tmpHead])
-        ns_l = rd.sample(list(neg_s_set), self.ns)# 1*ns
+        ns = rd.sample(list(neg_s_set), self.ns)# 1*ns
 
-        neg_o_set = self.all_entity #- set([tmpTail]) -  set(self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime])
+        neg_o_set = self.all_entity# - set([tmpTail]) -  set(self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime])
         #neg_o_set = (self.train_dict["ee2r"][tmpTail].keys()) | set(rd.sample(set(self.train_dict["t2ee"][tmpTime].keys()), 2*self.ns)) - set(self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime]) - set([tmpTail]) 
-        no_l = rd.sample(list(neg_o_set), self.ns)
-
-        neg_s_set = self.all_entity - set([tmpHead]) - set(self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime])
-        #neg_s_set = (self.train_dict["ee2r"][tmpHead].keys()) | set(rd.sample(set(self.train_dict["t2ee"][tmpTime].keys()), 2*self.ns)) - set(self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime]) - set([tmpHead])
-        ns_g = ns_l #rd.sample(list(neg_s_set), self.ns)# 1*ns
-
-        neg_o_set = self.all_entity - set([tmpTail]) -  set(self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime])
-        #neg_o_set = (self.train_dict["ee2r"][tmpTail].keys()) | set(rd.sample(set(self.train_dict["t2ee"][tmpTime].keys()), 2*self.ns)) - set(self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime]) - set([tmpTail]) 
-        no_g = no_l #rd.sample(list(neg_o_set), self.ns)
-
+        no = rd.sample(list(neg_o_set), self.ns)
         
         p_s_o_r = self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime]
         p_s_o_r.extend([self.numOfRelation]*self.sample)
@@ -143,11 +134,10 @@ class Train_dataset(Dataset):
 
                 o_h_t.append(time)
 
-        return [tmpHead, tmpRelation, tmpTail, tmpTime, torch.LongTensor(ns_l), torch.LongTensor(no_l), \
+        return [tmpHead, tmpRelation, tmpTail, tmpTime, torch.LongTensor(ns), torch.LongTensor(no), \
                 torch.LongTensor(s_h_r), torch.LongTensor(s_h_e), torch.LongTensor(s_h_t), \
                 torch.LongTensor(o_h_r), torch.LongTensor(o_h_e), torch.LongTensor(o_h_t), \
                 tmpHead_d, tmpTail_d, tmpTime_m, torch.LongTensor(p_s_o_r), \
-                torch.LongTensor(ns_g), torch.LongTensor(no_g) \
                 ]
 
 
@@ -164,7 +154,7 @@ class Test_dataset(Dataset):
         rd.seed(2020)
 
         self.sample = 3
-        self.time_window_size = 1
+        self.time_window_size = 5
 
     def __len__(self):
         return self.numOfTest

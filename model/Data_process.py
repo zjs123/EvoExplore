@@ -57,29 +57,36 @@ class Data_process:
 
     def get_time(self, line):
         time = 0
-        if "ICEWS14" in self.base_path:
-            year = 1
-            month = int(line.strip().split()[3].split('-')[1])
-            day = int(line.strip().split()[3].split('-')[2])
-            time = date(2014,month,day) - date(2014,1,1)
-            ind = time.days
-            time = [1, month, day, ind]
+        if "forecast" in self.base_path:
+            ind = int(line.strip().split()[3])
+            time = [1,1,1,ind]
+        else:
+            if "ICEWS14" in self.base_path:
+                year = 1
+                month = int(line.strip().split()[3].split('-')[1])
+                day = int(line.strip().split()[3].split('-')[2])
+                time = date(2014,month,day) - date(2014,1,1)
+                ind = time.days
+                time = [1, month, day, ind]
 
-        if "ICEWS05" in self.base_path:
-            year = int(line.strip().split()[3].split('-')[0])
-            month = int(line.strip().split()[3].split('-')[1])
-            day = int(line.strip().split()[3].split('-')[2])
-            time = date(year,month,day) - date(2005,1,1)
-            ind = time.days
-            time = [year, month, day, ind]
+            if "ICEWS05" in self.base_path:
+                year = int(line.strip().split()[3].split('-')[0]) - 2004
+                month = int(line.strip().split()[3].split('-')[1])
+                day = int(line.strip().split()[3].split('-')[2])
+                time = date(year,month,day) - date(2005,1,1)
+                ind = time.days
+                time = [year, month, day, ind]
 
-        if "GDELT" in self.base_path:
-            year = int(line.strip().split()[3].split('-')[0])
-            month = int(line.strip().split()[3].split('-')[1])
-            day = int(line.strip().split()[3].split('-')[2])
-            time = date(year,month,day) - date(2015,4,1)
-            ind = time.days
-            time = [year, month, day, ind]
+            if "WIKI11K" in self.base_path:
+                year1 = int(line.strip().split()[3].replace("#","0"))
+                year2 = int(line.strip().split()[4].replace("#","0"))
+                if year1 != 0:
+                    year = year1
+                else:
+                    year = year2
+
+                ind = year
+                time = [year, 1, 1, ind]
 
         return time
         
@@ -91,142 +98,184 @@ class Data_process:
             #print("train dict read finished")
             return self.train_dict
         
-        path = self.base_path+"train.txt"
-        inputData = open(path)
-        lines = inputData.readlines()
-        
         self.train_dict["er2e"] = {}
         self.train_dict["ee2r"] = {}
         self.train_dict["t2ee"] = {}
         self.train_dict["etre"] = {}
-        for line in lines:
-            tmpHead = int(line.strip().split()[0])
-            tmpRelation = int(line.strip().split()[1])
-            tmpTail = int(line.strip().split()[2])
-            Times = self.get_time(line)
-            tmpTime = Times[3]
-            if tmpHead not in self.train_dict["etre"].keys():
-                self.train_dict["etre"][tmpHead] = {}
-                self.train_dict["etre"][tmpHead][tmpTime] = {}
-                self.train_dict["etre"][tmpHead][tmpTime][tmpRelation] = set()
-                self.train_dict["etre"][tmpHead][tmpTime][tmpRelation].add(tmpTail)
-            else:
-                if tmpTime not in self.train_dict["etre"][tmpHead].keys():
+        self.train_dict["t2ec"] = {}
+        self.train_dict["re2e_n"] = {}
+        self.train_dict["ee2r_n"] = {}
+        for file in ["train.txt", "valid.txt", "test.txt"]:
+            path = self.base_path + file
+            inputData = open(path)
+            lines = inputData.readlines()
+            for line in lines:
+                tmpHead = int(line.strip().split()[0])
+                tmpRelation = int(line.strip().split()[1])
+                tmpTail = int(line.strip().split()[2])
+                Times = self.get_time(line)
+                tmpTime = Times[3]
+                if tmpHead not in self.train_dict["etre"].keys():
+                    self.train_dict["etre"][tmpHead] = {}
                     self.train_dict["etre"][tmpHead][tmpTime] = {}
                     self.train_dict["etre"][tmpHead][tmpTime][tmpRelation] = set()
                     self.train_dict["etre"][tmpHead][tmpTime][tmpRelation].add(tmpTail)
                 else:
-                    if tmpRelation not in self.train_dict["etre"][tmpHead][tmpTime].keys():
+                    if tmpTime not in self.train_dict["etre"][tmpHead].keys():
+                        self.train_dict["etre"][tmpHead][tmpTime] = {}
                         self.train_dict["etre"][tmpHead][tmpTime][tmpRelation] = set()
                         self.train_dict["etre"][tmpHead][tmpTime][tmpRelation].add(tmpTail)
                     else:
-                        self.train_dict["etre"][tmpHead][tmpTime][tmpRelation].add(tmpTail)
+                        if tmpRelation not in self.train_dict["etre"][tmpHead][tmpTime].keys():
+                            self.train_dict["etre"][tmpHead][tmpTime][tmpRelation] = set()
+                            self.train_dict["etre"][tmpHead][tmpTime][tmpRelation].add(tmpTail)
+                        else:
+                            self.train_dict["etre"][tmpHead][tmpTime][tmpRelation].add(tmpTail)
 
-            if tmpTail not in self.train_dict["etre"].keys():
-                self.train_dict["etre"][tmpTail] = {}
-                self.train_dict["etre"][tmpTail][tmpTime] = {}
-                self.train_dict["etre"][tmpTail][tmpTime][tmpRelation] = set()
-                self.train_dict["etre"][tmpTail][tmpTime][tmpRelation].add(tmpHead)
-            else:
-                if tmpTime not in self.train_dict["etre"][tmpTail].keys():
+                if tmpTail not in self.train_dict["etre"].keys():
+                    self.train_dict["etre"][tmpTail] = {}
                     self.train_dict["etre"][tmpTail][tmpTime] = {}
                     self.train_dict["etre"][tmpTail][tmpTime][tmpRelation] = set()
                     self.train_dict["etre"][tmpTail][tmpTime][tmpRelation].add(tmpHead)
                 else:
-                    if tmpRelation not in self.train_dict["etre"][tmpTail][tmpTime].keys():
+                    if tmpTime not in self.train_dict["etre"][tmpTail].keys():
+                        self.train_dict["etre"][tmpTail][tmpTime] = {}
                         self.train_dict["etre"][tmpTail][tmpTime][tmpRelation] = set()
                         self.train_dict["etre"][tmpTail][tmpTime][tmpRelation].add(tmpHead)
                     else:
-                        self.train_dict["etre"][tmpTail][tmpTime][tmpRelation].add(tmpHead)
+                        if tmpRelation not in self.train_dict["etre"][tmpTail][tmpTime].keys():
+                            self.train_dict["etre"][tmpTail][tmpTime][tmpRelation] = set()
+                            self.train_dict["etre"][tmpTail][tmpTime][tmpRelation].add(tmpHead)
+                        else:
+                            self.train_dict["etre"][tmpTail][tmpTime][tmpRelation].add(tmpHead)
 
 
-            if tmpTime not in self.train_dict["t2ee"].keys():
-                self.train_dict["t2ee"][tmpTime] = {}
-                self.train_dict["t2ee"][tmpTime][tmpHead] = set()
-                self.train_dict["t2ee"][tmpTime][tmpHead].add(tmpTail)
-                self.train_dict["t2ee"][tmpTime][tmpTail] = set()
-                self.train_dict["t2ee"][tmpTime][tmpTail].add(tmpHead)
-            else:
-                if tmpHead not in self.train_dict["t2ee"][tmpTime].keys():
+                if tmpTime not in self.train_dict["t2ee"].keys():
+                    self.train_dict["t2ee"][tmpTime] = {}
                     self.train_dict["t2ee"][tmpTime][tmpHead] = set()
                     self.train_dict["t2ee"][tmpTime][tmpHead].add(tmpTail)
-                else:
-                    self.train_dict["t2ee"][tmpTime][tmpHead].add(tmpTail)
-
-                if tmpTail not in self.train_dict["t2ee"][tmpTime].keys():
                     self.train_dict["t2ee"][tmpTime][tmpTail] = set()
                     self.train_dict["t2ee"][tmpTime][tmpTail].add(tmpHead)
                 else:
-                    self.train_dict["t2ee"][tmpTime][tmpTail].add(tmpHead)
+                    if tmpHead not in self.train_dict["t2ee"][tmpTime].keys():
+                        self.train_dict["t2ee"][tmpTime][tmpHead] = set()
+                        self.train_dict["t2ee"][tmpTime][tmpHead].add(tmpTail)
+                    else:
+                        self.train_dict["t2ee"][tmpTime][tmpHead].add(tmpTail)
 
-            if tmpHead not in self.train_dict["er2e"].keys():
-                self.train_dict["er2e"][tmpHead] = {}
-                self.train_dict["er2e"][tmpHead][tmpRelation] = {}
-                self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime] = []
-                self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime].append(tmpTail)
-            else:
-                if tmpRelation not in self.train_dict["er2e"][tmpHead].keys():
+                    if tmpTail not in self.train_dict["t2ee"][tmpTime].keys():
+                        self.train_dict["t2ee"][tmpTime][tmpTail] = set()
+                        self.train_dict["t2ee"][tmpTime][tmpTail].add(tmpHead)
+                    else:
+                        self.train_dict["t2ee"][tmpTime][tmpTail].add(tmpHead)
+
+                if tmpRelation not in self.train_dict["re2e_n"].keys():
+                    self.train_dict["re2e_n"][tmpRelation] = {}
+                    self.train_dict["re2e_n"][tmpRelation][tmpHead] = []
+                    self.train_dict["re2e_n"][tmpRelation][tmpTail] = []
+                    self.train_dict["re2e_n"][tmpRelation][tmpHead].append(tmpTail)
+                    self.train_dict["re2e_n"][tmpRelation][tmpTail].append(tmpHead)
+                else:
+                    if tmpHead not in self.train_dict["re2e_n"][tmpRelation].keys():
+                        self.train_dict["re2e_n"][tmpRelation][tmpHead] = []
+                        self.train_dict["re2e_n"][tmpRelation][tmpHead].append(tmpTail)
+                    else:
+                        self.train_dict["re2e_n"][tmpRelation][tmpHead].append(tmpTail)
+
+                    if tmpTail not in self.train_dict["re2e_n"][tmpRelation].keys():
+                        self.train_dict["re2e_n"][tmpRelation][tmpTail] = []
+                        self.train_dict["re2e_n"][tmpRelation][tmpTail].append(tmpHead)
+                    else:
+                        self.train_dict["re2e_n"][tmpRelation][tmpTail].append(tmpHead)
+
+                if tmpHead not in self.train_dict["er2e"].keys():
+                    self.train_dict["er2e"][tmpHead] = {}
                     self.train_dict["er2e"][tmpHead][tmpRelation] = {}
                     self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime] = []
                     self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime].append(tmpTail)
                 else:
-                    if tmpTime not in self.train_dict["er2e"][tmpHead][tmpRelation].keys():
+                    if tmpRelation not in self.train_dict["er2e"][tmpHead].keys():
+                        self.train_dict["er2e"][tmpHead][tmpRelation] = {}
                         self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime] = []
                         self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime].append(tmpTail)
                     else:
-                        self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime].append(tmpTail)
+                        if tmpTime not in self.train_dict["er2e"][tmpHead][tmpRelation].keys():
+                            self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime] = []
+                            self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime].append(tmpTail)
+                        else:
+                            self.train_dict["er2e"][tmpHead][tmpRelation][tmpTime].append(tmpTail)
 
-            if tmpTail not in self.train_dict["er2e"].keys():
-                self.train_dict["er2e"][tmpTail] = {}
-                self.train_dict["er2e"][tmpTail][tmpRelation] = {}
-                self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime] = []
-                self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime].append(tmpHead)
-            else:
-                if tmpRelation not in self.train_dict["er2e"][tmpTail].keys():
+                if tmpTail not in self.train_dict["er2e"].keys():
+                    self.train_dict["er2e"][tmpTail] = {}
                     self.train_dict["er2e"][tmpTail][tmpRelation] = {}
                     self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime] = []
                     self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime].append(tmpHead)
                 else:
-                    if tmpTime not in self.train_dict["er2e"][tmpTail][tmpRelation].keys():
+                    if tmpRelation not in self.train_dict["er2e"][tmpTail].keys():
+                        self.train_dict["er2e"][tmpTail][tmpRelation] = {}
                         self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime] = []
                         self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime].append(tmpHead)
                     else:
-                        self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime].append(tmpHead)
+                        if tmpTime not in self.train_dict["er2e"][tmpTail][tmpRelation].keys():
+                            self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime] = []
+                            self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime].append(tmpHead)
+                        else:
+                            self.train_dict["er2e"][tmpTail][tmpRelation][tmpTime].append(tmpHead)
 
 
-            if tmpHead not in self.train_dict["ee2r"].keys():
-                self.train_dict["ee2r"][tmpHead] = {}
-                self.train_dict["ee2r"][tmpHead][tmpTail] = {}
-                self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime] = []
-                self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime].append(tmpRelation)
-            else:
-                if tmpTail not in self.train_dict["ee2r"][tmpHead].keys():
+                if tmpHead not in self.train_dict["ee2r"].keys():
+                    self.train_dict["ee2r"][tmpHead] = {}
                     self.train_dict["ee2r"][tmpHead][tmpTail] = {}
                     self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime] = []
                     self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime].append(tmpRelation)
                 else:
-                    if tmpTime not in self.train_dict["ee2r"][tmpHead][tmpTail].keys():
+                    if tmpTail not in self.train_dict["ee2r"][tmpHead].keys():
+                        self.train_dict["ee2r"][tmpHead][tmpTail] = {}
                         self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime] = []
                         self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime].append(tmpRelation)
                     else:
-                        self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime].append(tmpRelation)
+                        if tmpTime not in self.train_dict["ee2r"][tmpHead][tmpTail].keys():
+                            self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime] = []
+                            self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime].append(tmpRelation)
+                        else:
+                            self.train_dict["ee2r"][tmpHead][tmpTail][tmpTime].append(tmpRelation)
 
-            if tmpTail not in self.train_dict["ee2r"].keys():
-                self.train_dict["ee2r"][tmpTail] = {}
-                self.train_dict["ee2r"][tmpTail][tmpHead] = {}
-                self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime] = []
-                self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime].append(tmpRelation)
-            else:
-                if tmpHead not in self.train_dict["ee2r"][tmpTail].keys():
+                if tmpTail not in self.train_dict["ee2r"].keys():
+                    self.train_dict["ee2r"][tmpTail] = {}
                     self.train_dict["ee2r"][tmpTail][tmpHead] = {}
                     self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime] = []
                     self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime].append(tmpRelation)
                 else:
-                    if tmpTime not in self.train_dict["ee2r"][tmpTail][tmpHead].keys():
+                    if tmpHead not in self.train_dict["ee2r"][tmpTail].keys():
+                        self.train_dict["ee2r"][tmpTail][tmpHead] = {}
                         self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime] = []
                         self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime].append(tmpRelation)
                     else:
-                        self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime].append(tmpRelation)
+                        if tmpTime not in self.train_dict["ee2r"][tmpTail][tmpHead].keys():
+                            self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime] = []
+                            self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime].append(tmpRelation)
+                        else:
+                            self.train_dict["ee2r"][tmpTail][tmpHead][tmpTime].append(tmpRelation)
+
+        for key in self.train_dict["ee2r"].keys():
+            self.train_dict["ee2r_n"][key] = {}
+            for akey in self.train_dict["ee2r"][key].keys():
+                self.train_dict["ee2r_n"][key][akey] = {}
+                tmp_list = set()
+                for time in self.train_dict["ee2r"][key][akey].keys():
+                    tmp_list = tmp_list|set(self.train_dict["ee2r"][key][akey][time])
+                    self.train_dict["ee2r_n"][key][akey][time] = list(tmp_list)
+
+        for time in self.train_dict["t2ee"].keys():
+            self.train_dict["t2ec"][time] = {}
+            for e in self.train_dict["t2ee"][time].keys():
+                self.train_dict["t2ec"][time][e] = set()
+                for tmp in self.train_dict["t2ee"][time].keys():
+                    e_nei = set(self.train_dict["t2ee"][time][e])
+                    tmp_nei = set(self.train_dict["t2ee"][time][tmp])
+                    cap = e_nei & tmp_nei
+                    if len(cap) > 0 or e in tmp_nei or tmp in e_nei:
+                        self.train_dict["t2ec"][time][e].add(tmp)
 
 
         train_dict_path = self.base_path + "/train_dict_v4.pickle"
