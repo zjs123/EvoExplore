@@ -12,10 +12,12 @@ If you make use of this code in your work, please cite the following paper:
 
 ```
 @inproceedings{Zhang2021EvoExplore,
-  title={EvoExplore: temporal knowledge graph representationlearning via co-evolution modelling},
+  title={Temporal knowledge graph representation learning with local and global evolutions},
   author={Jiasheng Zhang, Yongpan Sheng, Shuang Liang and Jie Shao},
-  booktitle={},
-  year={2021}
+  booktitle={Knowledge-Based Systems},
+  volume = {251},
+  pages = {109234},
+  year = {2022}
 }
 ```
 
